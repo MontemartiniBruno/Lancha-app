@@ -53,12 +53,12 @@ export function ManualTurnForm({ onTurnAdded }: ManualTurnFormProps) {
       });
 
       if (result?.error) {
-        // Verificar si es un error de duplicado
-        if (result.error.code === '23505' || result.error.message?.includes('duplicate')) {
-          error('Ya existe un turno en esta fecha. Se actualizará el turno existente.');
-        } else {
-          error('Error al agregar el turno: ' + (result.error.message || 'Error desconocido'));
-        }
+        // El error puede ser un string o un objeto
+        const errorMessage = typeof result.error === 'string' 
+          ? result.error 
+          : (result.error as any)?.message || 'Error desconocido';
+        
+        error('Error al agregar el turno: ' + errorMessage);
         setLoading(false);
         return;
       }

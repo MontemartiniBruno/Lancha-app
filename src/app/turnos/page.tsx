@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Calendar } from '@/components/turnos/Calendar';
 import { SorteoButton } from '@/components/turnos/SorteoButton';
 import { ManualTurnForm } from '@/components/turnos/ManualTurnForm';
@@ -12,20 +12,16 @@ export default function TurnosPage() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const { turns, refresh } = useTurns();
-  const [refreshKey, setRefreshKey] = useState(0);
+  const prevModalState = useRef(false);
   
-  // Forzar refresh cuando se cierra el modal de edición o cuando cambia el mes
+  // Refrescar solo cuando el modal se cierra (de true a false), no al montar
   useEffect(() => {
-    if (!showEditModal) {
+    if (prevModalState.current && !showEditModal) {
+      // El modal se cerró, refrescar datos
       refresh();
-      setRefreshKey(prev => prev + 1);
     }
-  }, [showEditModal, refresh]);
-  
-  // Refrescar cuando cambia el mes
-  useEffect(() => {
-    refresh();
-  }, [selectedMonth, refresh]);
+    prevModalState.current = showEditModal;
+  }, [showEditModal]);
 
   const handleDateClick = (date: Date) => {
     setSelectedDate(date);

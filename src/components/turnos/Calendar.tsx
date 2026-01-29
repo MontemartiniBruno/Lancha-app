@@ -1,7 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import * as React from 'react';
+import { useState } from 'react';
 import { Card } from '@/components/ui/Card';
 import { CalendarDay } from './CalendarDay';
 import { useTurns } from '@/hooks/useTurns';
@@ -18,13 +17,11 @@ interface CalendarProps {
 }
 
 export function Calendar({ month, onMonthChange, onDateClick }: CalendarProps) {
-  const { turns, users, refresh } = useTurns();
+  const { turns, users } = useTurns();
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   
-  // Refrescar cuando cambia el mes para asegurar datos actualizados
-  React.useEffect(() => {
-    refresh();
-  }, [month, refresh]);
+  // No necesitamos refrescar aquí, el hook useTurns ya carga los datos al montar
+  // y se actualizan cuando se hacen cambios
 
   const monthStart = startOfMonth(month);
   const monthEnd = endOfMonth(month);

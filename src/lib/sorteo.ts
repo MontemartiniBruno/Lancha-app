@@ -38,7 +38,7 @@ export function sortearMes(
       turn_date: date.toISOString().split('T')[0],
       type: 'private',
       assigned_to: users[i % users.length].id,
-      notes: null,
+      notes: undefined,
     });
   }
   
@@ -49,7 +49,7 @@ export function sortearMes(
       turn_date: date.toISOString().split('T')[0],
       type: 'shared',
       assigned_to: null,
-      notes: null,
+      notes: undefined,
     });
   }
   

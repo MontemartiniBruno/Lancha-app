@@ -69,7 +69,10 @@ export function TurnEditModal({ isOpen, onClose, turn, date }: TurnEditModalProp
         });
         
         if (result?.error) {
-          error('Error al agregar el turno: ' + (result.error.message || 'Error desconocido'));
+          const errorMessage = typeof result.error === 'string' 
+            ? result.error 
+            : (result.error as any)?.message || 'Error desconocido';
+          error('Error al agregar el turno: ' + errorMessage);
           setLoading(false);
           return;
         }

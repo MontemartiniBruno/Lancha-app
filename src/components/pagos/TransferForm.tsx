@@ -9,6 +9,7 @@ import { useMovements } from '@/hooks/useMovements';
 import { useBalance } from '@/hooks/useBalance';
 import { useToastContext } from '@/components/providers/ToastProvider';
 import { supabase } from '@/lib/supabase';
+import { formatCurrencyInput, parseCurrency } from '@/lib/utils';
 
 export function TransferForm() {
   const { addTransfer, refresh } = useMovements();
@@ -34,16 +35,25 @@ export function TransferForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!userId || !amount || !transferDate) {
+    if (!userId || !amount || amount === '$' || !transferDate) {
       error('Por favor completa todos los campos requeridos');
       return;
     }
 
     setLoading(true);
     
+    // Parsear el monto formateado a número
+    const parsedAmount = parseCurrency(amount);
+    
+    if (parsedAmount <= 0) {
+      error('El monto debe ser mayor a 0');
+      setLoading(false);
+      return;
+    }
+    
     const result = await addTransfer({
       user_id: userId,
-      amount: parseFloat(amount),
+      amount: parsedAmount,
       transfer_date: transferDate,
       notes: notes || undefined,
     });
@@ -81,12 +91,20 @@ export function TransferForm() {
 
         <Input
           label="Monto"
-          type="number"
-          step="0.01"
-          min="0"
+          type="text"
           value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          placeholder="0.00"
+          onChange={(e) => {
+            const formatted = formatCurrencyInput(e.target.value);
+            setAmount(formatted);
+          }}
+          onBlur={(e) => {
+            // Asegurar que siempre tenga el formato correcto al perder el foco
+            if (e.target.value && e.target.value !== '$') {
+              const formatted = formatCurrencyInput(e.target.value);
+              setAmount(formatted);
+            }
+          }}
+          placeholder="$0"
           required
         />
 

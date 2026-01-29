@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { useMovements } from '@/hooks/useMovements';
 import { useBalance } from '@/hooks/useBalance';
 import { useToastContext } from '@/components/providers/ToastProvider';
+import { formatCurrencyInput, parseCurrency } from '@/lib/utils';
 
 export function ExpenseForm() {
   const { addExpense } = useMovements();
@@ -21,16 +22,25 @@ export function ExpenseForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!concept || !amount || !expenseDate) {
+    if (!concept || !amount || amount === '$' || !expenseDate) {
       error('Por favor completa todos los campos requeridos');
       return;
     }
 
     setLoading(true);
     
+    // Parsear el monto formateado a número
+    const parsedAmount = parseCurrency(amount);
+    
+    if (parsedAmount <= 0) {
+      error('El monto debe ser mayor a 0');
+      setLoading(false);
+      return;
+    }
+    
     const result = await addExpense({
       concept,
-      amount: parseFloat(amount),
+      amount: parsedAmount,
       expense_date: expenseDate,
       notes: notes || undefined,
     });
@@ -63,12 +73,20 @@ export function ExpenseForm() {
 
         <Input
           label="Monto"
-          type="number"
-          step="0.01"
-          min="0"
+          type="text"
           value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          placeholder="0.00"
+          onChange={(e) => {
+            const formatted = formatCurrencyInput(e.target.value);
+            setAmount(formatted);
+          }}
+          onBlur={(e) => {
+            // Asegurar que siempre tenga el formato correcto al perder el foco
+            if (e.target.value && e.target.value !== '$') {
+              const formatted = formatCurrencyInput(e.target.value);
+              setAmount(formatted);
+            }
+          }}
+          placeholder="$0"
           required
         />
 

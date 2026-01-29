@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
 import { sortearMes } from '@/lib/sorteo';
 import type { Turn, User } from '@/types';
@@ -11,12 +11,8 @@ export function useTurns() {
   const [upcomingTurns, setUpcomingTurns] = useState<Turn[]>([]);
   const [loading, setLoading] = useState(true);
   
-  useEffect(() => {
-    fetchTurns();
-    fetchUsers();
-  }, []);
-  
-  async function fetchTurns() {
+  // Función interna para fetch que no cambia
+  const fetchTurnsInternal = async () => {
     try {
       setLoading(true);
       const { data } = await supabase
@@ -39,9 +35,9 @@ export function useTurns() {
     } finally {
       setLoading(false);
     }
-  }
+  };
   
-  async function fetchUsers() {
+  const fetchUsersInternal = async () => {
     try {
       const { data } = await supabase
         .from('users')
@@ -53,11 +49,16 @@ export function useTurns() {
     } catch (error) {
       console.error('Error fetching users:', error);
     }
-  }
+  };
+  
+  useEffect(() => {
+    fetchTurnsInternal();
+    fetchUsersInternal();
+  }, []);
   
   async function sortear(year: number, month: number) {
     if (users.length === 0) {
-      await fetchUsers();
+      await fetchUsersInternal();
     }
     
     if (users.length === 0) return;
@@ -83,7 +84,7 @@ export function useTurns() {
         return;
       }
       
-      await fetchTurns();
+      await fetchTurnsInternal();
     } catch (error) {
       console.error('Error sorting turns:', error);
     }
@@ -101,7 +102,7 @@ export function useTurns() {
         return;
       }
       
-      await fetchTurns();
+      await fetchTurnsInternal();
     } catch (error) {
       console.error('Error updating turn:', error);
     }
@@ -119,7 +120,7 @@ export function useTurns() {
         return;
       }
       
-      await fetchTurns();
+      await fetchTurnsInternal();
     } catch (error) {
       console.error('Error deleting turn:', error);
     }
@@ -160,7 +161,7 @@ export function useTurns() {
       }
       
       // Refrescar los turnos después de agregar/actualizar
-      await fetchTurns();
+      await fetchTurnsInternal();
       return { error: null };
     } catch (error) {
       console.error('Error adding turn:', error);
@@ -168,6 +169,14 @@ export function useTurns() {
     }
   }
   
+  // Memoizar refresh para evitar loops infinitos - usa useRef para mantener referencia estable
+  const refreshRef = useRef(fetchTurnsInternal);
+  refreshRef.current = fetchTurnsInternal;
+  
+  const refresh = useCallback(() => {
+    refreshRef.current();
+  }, []); // Sin dependencias, siempre usa la referencia más reciente
+
   return {
     turns,
     users,
@@ -177,6 +186,6 @@ export function useTurns() {
     updateTurn,
     deleteTurn,
     addManualTurn,
-    refresh: fetchTurns,
+    refresh,
   };
 }
