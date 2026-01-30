@@ -15,10 +15,12 @@ export type CommonAccount = {
 
 export type Transfer = {
   id: string;
-  user_id: string;
+  user_id: string | null;        // Ahora puede ser null
+  custom_name: string | null;     // NUEVO
   amount: number;
   transfer_date: string; // ISO date
   notes?: string;
+  receipt_url?: string;           // NUEVO
   created_at: string;
 };
 
@@ -28,6 +30,7 @@ export type Expense = {
   amount: number;
   expense_date: string; // ISO date
   notes?: string;
+  receipt_url?: string;           // NUEVO
   created_at: string;
 };
 
@@ -48,6 +51,7 @@ export type Movement = {
   date: string;
   description: string;
   amount: number;
+  receipt_url?: string;           // NUEVO
   created_at: string;
 };
 
@@ -56,4 +60,15 @@ export type UserBalance = {
   name: string;
   total_transferred: number;
   balance: number; // Negativo = debe, Positivo = adelantó
+};
+
+// NUEVO: BoatInfo type
+export type BoatInfo = {
+  id: number;
+  model: string;
+  motor: string;
+  matricula: string;
+  last_service: string;
+  next_service: string;
+  updated_at: string;
 };

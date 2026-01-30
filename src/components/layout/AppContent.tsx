@@ -11,9 +11,10 @@ interface AppContentProps {
 
 export function AppContent({ children }: AppContentProps) {
   const pathname = usePathname();
-  const isLoginPage = pathname === '/login';
+  const publicRoutes = ['/login', '/debug'];
+  const isPublicRoute = publicRoutes.includes(pathname);
 
-  if (isLoginPage) {
+  if (isPublicRoute) {
     return <>{children}</>;
   }
 

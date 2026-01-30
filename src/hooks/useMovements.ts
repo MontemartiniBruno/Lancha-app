@@ -40,12 +40,16 @@ export function useMovements() {
       const allMovements: Movement[] = [];
       
       transfers?.forEach((transfer: any) => {
+        // Determinar el nombre: custom_name si existe, sino el nombre del usuario
+        const transferName = transfer.custom_name || transfer.users?.name || 'Usuario';
+        
         allMovements.push({
           id: transfer.id,
           type: 'transfer',
           date: transfer.transfer_date,
-          description: `Transferencia de ${transfer.users?.name || 'Usuario'}`,
+          description: `Transferencia de ${transferName}`,
           amount: transfer.amount,
+          receipt_url: transfer.receipt_url,
           created_at: transfer.created_at,
         });
       });
@@ -57,6 +61,7 @@ export function useMovements() {
           date: expense.expense_date,
           description: expense.concept,
           amount: -expense.amount,
+          receipt_url: expense.receipt_url,
           created_at: expense.created_at,
         });
       });

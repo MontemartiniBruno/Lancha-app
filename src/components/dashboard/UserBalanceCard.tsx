@@ -9,7 +9,7 @@ export function UserBalanceCard() {
   if (loading) {
     return (
       <Card title="📊 Balance por Usuario">
-        <div className="text-center py-4 text-gray-500">Cargando...</div>
+        <div className="text-center text-gray-500 py-4">Cargando...</div>
       </Card>
     );
   }
@@ -17,28 +17,36 @@ export function UserBalanceCard() {
   return (
     <Card title="📊 Balance por Usuario">
       <div className="space-y-3">
-        {userBalances?.map((user) => (
-          <div key={user.id} className="flex justify-between items-center py-2">
-            <span className="font-medium text-gray-700">{user.name}</span>
-            <div className="flex items-center gap-2">
-              <span className={`font-semibold ${
-                user.balance < 0 ? 'text-red-600' : 
-                user.balance > 0 ? 'text-green-600' : 'text-gray-600'
-              }`}>
-                ${Math.abs(user.balance).toLocaleString('es-AR', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
-              </span>
-              {user.balance < 0 ? (
-                <span className="text-red-600 text-lg">⚠️</span>
-              ) : user.balance > 0 ? (
-                <span className="text-green-600 text-lg">✅</span>
-              ) : (
-                <span className="text-gray-400 text-lg">⚪</span>
-              )}
+        {userBalances?.map((user) => {
+          // IMPORTANTE: La vista devuelve valores positivos para deudas
+          // Necesitamos invertir el signo para mostrar correctamente
+          const balance = -user.balance; // Invertir signo
+          
+          const isNegative = balance < 0;
+          const isPositive = balance > 0;
+          
+          return (
+            <div key={user.id} className="border-t border-gray-100 pt-3 first:border-t-0 first:pt-0">
+              <div className="flex justify-between items-center">
+                <span className="font-medium text-gray-700">{user.name}</span>
+                <span className={`font-semibold text-lg ${
+                  isNegative ? 'text-red-600' : 
+                  isPositive ? 'text-green-600' : 
+                  'text-gray-600'
+                }`}>
+                  {balance < 0 && '-'}
+                  {balance > 0 && '+'}
+                  ${Math.abs(balance).toLocaleString('es-AR')}
+                </span>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
+        
         {(!userBalances || userBalances.length === 0) && (
-          <div className="text-center py-4 text-gray-500">No hay usuarios</div>
+          <div className="text-sm text-gray-500 text-center py-8">
+            Sin aportes registrados todavía
+          </div>
         )}
       </div>
     </Card>

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, DollarSign, Calendar } from 'lucide-react';
+import { Home, DollarSign, Calendar, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export function BottomNav() {
@@ -12,6 +12,7 @@ export function BottomNav() {
     { href: '/', label: 'Home', icon: Home },
     { href: '/pagos', label: 'Pagos', icon: DollarSign },
     { href: '/turnos', label: 'Turnos', icon: Calendar },
+    { href: '/info', label: 'Info', icon: Info },
   ];
   
   return (

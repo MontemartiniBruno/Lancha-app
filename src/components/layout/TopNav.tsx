@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Home, DollarSign, Calendar, LogOut } from 'lucide-react';
+import { Home, DollarSign, Calendar, LogOut, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/Button';
@@ -27,9 +27,18 @@ export function TopNav() {
     <nav className="hidden md:flex bg-white border-b border-gray-200 shadow-sm sticky top-0 z-40">
       <div className="max-w-7xl mx-auto w-full px-6">
         <div className="flex items-center justify-between h-16">
-          <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <h1 className="text-xl font-bold text-primary-500 cursor-pointer">🚤 Lancha App</h1>
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+              <h1 className="text-xl font-bold text-primary-500 cursor-pointer">🚤 Turca</h1>
+            </Link>
+            <Link 
+              href="/info" 
+              className="p-2 text-gray-600 hover:text-primary-500 hover:bg-gray-50 rounded-lg transition-colors"
+              title="Información"
+            >
+              <Info className="w-5 h-5" />
+            </Link>
+          </div>
           
           <div className="flex items-center gap-2">
             {links.map(({ href, label, icon: Icon }) => {

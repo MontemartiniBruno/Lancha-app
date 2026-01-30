@@ -16,52 +16,42 @@ export function useBalance() {
   }, []);
   
   async function fetchBalance() {
+    setLoading(true);
+    
     try {
-      setLoading(true);
+      // Balance cuenta común - usar vista si existe, sino calcular
+      const { data: balanceData } = await supabase
+        .from('common_balance')
+        .select('balance')
+        .single();
       
-      // Obtener todas las transferencias
-      const { data: transfers } = await supabase
-        .from('transfers')
-        .select('*');
-      
-      // Obtener todos los gastos
-      const { data: expenses } = await supabase
-        .from('expenses')
-        .select('*');
-      
-      // Calcular balance común
-      const totalTransfers = transfers?.reduce((sum, t) => sum + t.amount, 0) || 0;
-      const totalExpenses = expenses?.reduce((sum, e) => sum + e.amount, 0) || 0;
-      const balance = totalTransfers - totalExpenses;
-      setCommonBalance(balance);
-      
-      // Obtener usuarios
-      const { data: users } = await supabase
-        .from('users')
-        .select('*');
-      
-      if (users) {
-        // Calcular balance por usuario
-        // Gastos totales / 3 = lo que cada usuario debe pagar
-        const gastosPorUsuario = totalExpenses / 3;
+      if (balanceData) {
+        setCommonBalance(balanceData.balance);
+      } else {
+        // Fallback: calcular manualmente si la vista no existe
+        const { data: transfers } = await supabase
+          .from('transfers')
+          .select('*');
         
-        const balances: UserBalance[] = users.map(user => {
-          const userTransfers = transfers?.filter(t => t.user_id === user.id) || [];
-          const totalTransferred = userTransfers.reduce((sum, t) => sum + t.amount, 0);
-          
-          // Balance = Transferencias del usuario - (Gastos totales / 3)
-          // Negativo = debe, Positivo = adelantó
-          const balancePerUser = totalTransferred - gastosPorUsuario;
-          
-          return {
-            id: user.id,
-            name: user.name,
-            total_transferred: totalTransferred,
-            balance: balancePerUser,
-          };
-        });
+        const { data: expenses } = await supabase
+          .from('expenses')
+          .select('*');
         
-        setUserBalances(balances);
+        const totalTransfersAmount = transfers?.reduce((sum, t) => sum + t.amount, 0) || 0;
+        const totalExpenses = expenses?.reduce((sum, e) => sum + e.amount, 0) || 0;
+        const balance = totalTransfersAmount - totalExpenses;
+        setCommonBalance(balance);
+      }
+      
+      // Balance por usuario - USAR DIRECTAMENTE LO QUE DEVUELVE LA VISTA
+      const { data: usersData } = await supabase
+        .from('user_balances')
+        .select('*')
+        .order('name');
+      
+      if (usersData) {
+        // NO TOCAR LOS VALORES, usarlos tal cual vienen de la vista
+        setUserBalances(usersData);
       }
     } catch (error) {
       console.error('Error fetching balance:', error);
