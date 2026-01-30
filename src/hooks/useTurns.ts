@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
-import { sortearMes } from '@/lib/sorteo';
+import { sortearAno } from '@/lib/sorteo';
 import type { Turn, User } from '@/types';
 
 export function useTurns() {
@@ -56,7 +56,7 @@ export function useTurns() {
     fetchUsersInternal();
   }, []);
   
-  async function sortear(year: number, month: number) {
+  async function sortear(year: number) {
     if (users.length === 0) {
       await fetchUsersInternal();
     }
@@ -64,11 +64,11 @@ export function useTurns() {
     if (users.length === 0) return;
     
     try {
-      const newTurns = sortearMes(year, month, users);
+      const newTurns = sortearAno(year, users);
       
-      // Eliminar turnos existentes del mes
-      const firstDay = new Date(year, month, 1).toISOString().split('T')[0];
-      const lastDay = new Date(year, month + 1, 0).toISOString().split('T')[0];
+      // Eliminar turnos existentes del año
+      const firstDay = new Date(year, 0, 1).toISOString().split('T')[0];
+      const lastDay = new Date(year, 11, 31).toISOString().split('T')[0];
       
       await supabase
         .from('turns')

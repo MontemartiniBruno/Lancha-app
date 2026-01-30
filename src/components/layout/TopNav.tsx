@@ -29,7 +29,7 @@ export function TopNav() {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-2">
             <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <h1 className="text-xl font-bold text-primary-500 cursor-pointer">🚤 Turca</h1>
+              <h1 className="text-xl font-bold text-primary-500 cursor-pointer">🚤 La turca</h1>
             </Link>
             <Link 
               href="/info" 

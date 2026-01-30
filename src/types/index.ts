@@ -51,7 +51,8 @@ export type Movement = {
   date: string;
   description: string;
   amount: number;
-  receipt_url?: string;           // NUEVO
+  receipt_url?: string;
+  notes?: string;
   created_at: string;
 };
 

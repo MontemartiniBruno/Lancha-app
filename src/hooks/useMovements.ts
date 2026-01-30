@@ -50,6 +50,7 @@ export function useMovements() {
           description: `Transferencia de ${transferName}`,
           amount: transfer.amount,
           receipt_url: transfer.receipt_url,
+          notes: transfer.notes,
           created_at: transfer.created_at,
         });
       });
@@ -62,6 +63,7 @@ export function useMovements() {
           description: expense.concept,
           amount: -expense.amount,
           receipt_url: expense.receipt_url,
+          notes: expense.notes,
           created_at: expense.created_at,
         });
       });
@@ -153,6 +155,27 @@ export function useMovements() {
     }
   }
   
+  async function updateReceipt(movementId: string, movementType: 'transfer' | 'expense', receiptUrl: string) {
+    try {
+      const table = movementType === 'transfer' ? 'transfers' : 'expenses';
+      const { error } = await supabase
+        .from(table)
+        .update({ receipt_url: receiptUrl })
+        .eq('id', movementId);
+      
+      if (error) {
+        console.error('Error updating receipt:', error);
+        return { error };
+      }
+      
+      await fetchMovements();
+      return { error: null };
+    } catch (error) {
+      console.error('Error updating receipt:', error);
+      return { error };
+    }
+  }
+  
   return {
     movements,
     loading,
@@ -160,6 +183,7 @@ export function useMovements() {
     addExpense,
     deleteTransfer,
     deleteExpense,
+    updateReceipt,
     refresh: fetchMovements,
   };
 }
