@@ -21,6 +21,11 @@ export function AppContent({ children }: AppContentProps) {
   return (
     <ProtectedRoute>
       <TopNav />
+      {process.env.NEXT_PUBLIC_APP_ENV !== 'production' && (
+        <div className="bg-orange-500 text-white text-center text-xs py-1 font-medium">
+          ENTORNO DE PRUEBA
+        </div>
+      )}
       <div className="min-h-screen bg-gray-50 pb-16 md:pb-0">
         {children}
       </div>

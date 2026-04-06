@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Home, DollarSign, Calendar, LogOut, Info } from 'lucide-react';
+import { Home, DollarSign, Calendar, LogOut, Info, TrendingUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/Button';
@@ -16,6 +16,7 @@ export function TopNav() {
     { href: '/', label: 'Dashboard', icon: Home },
     { href: '/pagos', label: 'Pagos', icon: DollarSign },
     { href: '/turnos', label: 'Turnos', icon: Calendar },
+    { href: '/recurrentes', label: 'Recurrentes', icon: TrendingUp },
   ];
 
   const handleLogout = async () => {

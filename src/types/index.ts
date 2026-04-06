@@ -73,3 +73,29 @@ export type BoatInfo = {
   next_service: string;
   updated_at: string;
 };
+
+// Gastos Recurrentes
+export type RecurringExpenseFrequency = 'monthly' | 'annual' | 'custom';
+
+export type RecurringExpense = {
+  id: string;
+  name: string;
+  amount: number;
+  frequency_type: RecurringExpenseFrequency;
+  frequency_months: number | null;
+  next_due_date: string | null;
+  last_done_date: string | null;
+  notes: string | null;
+  active: boolean;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+};
+
+export type RecurringExpenseSummary = {
+  items: RecurringExpense[];
+  totalMonthlyAmount: number;
+  perMemberMonthly: number;
+  emergencySavingsPerMember: number;
+  guarderia: RecurringExpense | null;
+};

@@ -2,6 +2,7 @@ import { CommonAccountCard } from '@/components/dashboard/CommonAccountCard';
 import { UserBalanceCard } from '@/components/dashboard/UserBalanceCard';
 import { UpcomingTurns } from '@/components/dashboard/UpcomingTurns';
 import { RecentMovements } from '@/components/dashboard/RecentMovements';
+import { UpcomingRecurring } from '@/components/recurrentes/UpcomingRecurring';
 
 export default function Dashboard() {
   return (
@@ -17,6 +18,9 @@ export default function Dashboard() {
         </div>
         <div className="md:col-span-2 lg:col-span-1">
           <UpcomingTurns />
+        </div>
+        <div className="md:col-span-2 lg:col-span-1">
+          <UpcomingRecurring />
         </div>
         <div className="md:col-span-2 lg:col-span-3">
           <RecentMovements />
